@@ -21,16 +21,6 @@ export const mintNFT = async (url, name, description) => {
     metadata.image = url;
     metadata.description = description;
 
-    // make pinata call
-    // const pinataResponse = await pinJSONToIPFS(metadata);
-    // if (!pinataResponse.success) {
-    //     return {
-    //         success: false,
-    //         status: "😥 Something went wrong while uploading your tokenURI.",
-    //     }
-    // }
-    // const tokenURI = pinataResponse.pinataUrl;
-    // console.log(tokenURI);
     const tokenURI = ({
         "name":"test",
         "image":"https://bafybeigwiw6ngj5aeqkim27xb5bpgg3pdpuk3xvwypqp3yotf6vun25jnu.ipfs.dweb.link/",
