@@ -21,10 +21,14 @@ export const mintNFT = async (url, name, description) => {
     metadata.image = url;
     metadata.description = description;
 
+    // tokenURI contains following metadata:
+    // name: the name of NFT
+    // image: URI of IPFS content
+    // description: the description of the whole metadata
     const tokenURI = ({
-        "name":"test",
-        "image":"https://bafybeigwiw6ngj5aeqkim27xb5bpgg3pdpuk3xvwypqp3yotf6vun25jnu.ipfs.dweb.link/",
-        "description":"test"
+        "name":"HIYOUTUBE",
+        "image":"bafybeigwiw6ngj5aeqkim27xb5bpgg3pdpuk3xvwypqp3yotf6vun25jnu/master.m3u8",
+        "description":"https://www.youtube.com/watch?v=T17JbKs2-y4"
     });
 
     let test = await new web3.eth.Contract(contractABI, contractAddress);
