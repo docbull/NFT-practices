@@ -1,3 +1,5 @@
+import { pinJSONToIPFS } from './pinata.js'
+
 require('dotenv').config();
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
@@ -21,25 +23,36 @@ export const mintNFT = async (url, name, description) => {
     metadata.image = url;
     metadata.description = description;
 
-    // tokenURI contains following metadata:
-    // name: the name of NFT
-    // image: URI of IPFS content
-    // description: the description of the whole metadata
-    const tokenURI = ({
-        "name":"HIYOUTUBE",
-        "image":"bafybeigwiw6ngj5aeqkim27xb5bpgg3pdpuk3xvwypqp3yotf6vun25jnu/master.m3u8",
-        "description":"https://www.youtube.com/watch?v=T17JbKs2-y4"
-    });
+    // make pinata call
+    const pinataResponse = await pinJSONToIPFS(metadata);
+    if (!pinataResponse.success) {
+        return {
+            success: false,
+            status: "😥 Something went wrong while uploading your tokenURI.",
+        }
+    }
+    const tokenURI = pinataResponse.pinataUrl;
+    console.log(tokenURI);
 
-    let test = await new web3.eth.Contract(contractABI, contractAddress);
+    // const tokenURI = 'https://ipfs.io/ipfs/QmRFuoXzVCkvtgjHxHVjEgVwvbKYKhV36xmvm5ymEdkKS3'
+
+    // // tokenURI contains following metadata:
+    // // name: the name of NFT
+    // // image: URI of IPFS content
+    // // description: the description of the whole metadata
+    // const metadataJSON = ({
+    //     "name":"HI YOUTUBE",
+    //     "image": "bafybeigwiw6ngj5aeqkim27xb5bpgg3pdpuk3xvwypqp3yotf6vun25jnu",
+    //     "description":"This video is uploaded to https://www.youtube.com/watch?v=T17JbKs2-y4"
+    // });
 
     window.contract = await new web3.eth.Contract(contractABI, contractAddress);
-    
+
     // set up your Ethereum transaction
     const transactionParameters = {
         to: contractAddress, // Required except during contract publications.
         from: window.ethereum.selectedAddress, // must match user's active address.
-        'data': test.methods.mintNFT(window.ethereum.selectedAddress, tokenURI).encodeABI() // make call to NFT smart contract
+        'data': window.contract.methods.mintNFT(window.ethereum.selectedAddress, tokenURI).encodeABI() // make call to NFT smart contract
     };
 
     try {
@@ -62,6 +75,12 @@ export const mintNFT = async (url, name, description) => {
 
 export const connectWallet = async () => {
     if (window.ethereum) {
+        console.log("accounts:", web3.eth.accounts);
+        const addresses = await window.ethereum.request({
+            method: "eth_requestAccounts",
+        });
+        console.log("MetaMask account:", addresses[0]);
+        
         try {
             const addressArray = await window.ethereum.request({
                 method: "eth_requestAccounts",
@@ -101,7 +120,7 @@ export const getCurrentWalletConnected = async () => {
             const addressArray = await window.ethereum.request({
                 method: "eth_accounts",
             });
-            if (addressArray.length > 0) {
+            if (addressArray.length > 0) {            
                 return {
                     address: addressArray[0],
                     status: "👆 Write a message in the text-field above.",
