@@ -5,9 +5,9 @@ contract INLabToken {
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
 
-    string public constant name = "INLab Coin";
-    string public constant symbol = "INL";
-    uint8 public constant decimals = 18;
+    string public constant name = "INLab Coin"; // the name that will be shown on wallet
+    string public constant symbol = "INL";      // it indicates the coin's symbol (e.g., ETH from ethereum)
+    uint8 public constant decimals = 18;        // this number means the decimal of the amount of the coin
 
     mapping(address => uint256) balances;
     mapping(address => mapping (address => uint256)) allowed;
