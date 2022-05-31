@@ -23,18 +23,18 @@ export const mintNFT = async (url, name, description) => {
     metadata.image = url;
     metadata.description = description;
 
-    // make pinata call
-    const pinataResponse = await pinJSONToIPFS(metadata);
-    if (!pinataResponse.success) {
-        return {
-            success: false,
-            status: "😥 Something went wrong while uploading your tokenURI.",
-        }
-    }
-    const tokenURI = pinataResponse.pinataUrl;
-    console.log(tokenURI);
+    // // make pinata call
+    // const pinataResponse = await pinJSONToIPFS(metadata);
+    // if (!pinataResponse.success) {
+    //     return {
+    //         success: false,
+    //         status: "😥 Something went wrong while uploading your tokenURI.",
+    //     }
+    // }
+    // const tokenURI = pinataResponse.pinataUrl;
+    // console.log(tokenURI);
 
-    // const tokenURI = 'https://ipfs.io/ipfs/QmRFuoXzVCkvtgjHxHVjEgVwvbKYKhV36xmvm5ymEdkKS3'
+    const tokenURI = 'https://ipfs.io/ipfs/QmRFuoXzVCkvtgjHxHVjEgVwvbKYKhV36xmvm5ymEdkKS3'
 
     // // tokenURI contains following metadata:
     // // name: the name of NFT
@@ -75,12 +75,26 @@ export const mintNFT = async (url, name, description) => {
 
 export const connectWallet = async () => {
     if (window.ethereum) {
-        console.log("accounts:", web3.eth.accounts);
         const addresses = await window.ethereum.request({
             method: "eth_requestAccounts",
         });
         console.log("MetaMask account:", addresses[0]);
+
+        let res = await web3.eth.getTransactionReceipt("0x28c9e0064848d619e3c6369e124d4f36b72b1572a235ac8189e39746351c529b");
+        console.log(res.logs[0]);
+        let tokenId = web3.utils.hexToNumber(res.logs[0].topics[3]);
+        console.log(tokenId);
+
+        res = await web3.alchemy.getNftMetadata({
+            contractAddress: "0x4c4a07f737bf57f6632b6cab089b78f62385acae",
+            tokenId: tokenId
+        })
+        console.log(res);
         
+        let contract = new web3.eth.Contract(contractABI, "0x4c4a07f737bf57f6632b6cab089b78f62385acae");
+        let owner = await contract.methods.ownerOf(tokenId).call();
+        console.log(owner);
+
         try {
             const addressArray = await window.ethereum.request({
                 method: "eth_requestAccounts",
@@ -158,11 +172,15 @@ export const getCurrentWalletConnected = async () => {
 export const getNFTInformation = async () => {
     if (window.ethereum) {
         // getting NFT metadate
-        const response = web3.alchemy.getTokenMetadata("0x4c4a07f737bf57f6632b6cab089b78f62385acae");
+        // const response = await web3.alchemy.getTokenMetadata("0x4C4a07F737Bf57F6632B6CAB089B78f62385aCaE");
         // const response = await web3.alchemy.getNftMetadata({
         //     contractAddress: "0x4c4a07f737bf57f6632b6cab089b78f62385acae",
         //     tokenId: "3709"
         // });
+        const response = await web3.alchemy.getNftMetadata({
+            contractAddress: "0x4c4a07f737bf57f6632b6cab089b78f62385acae",
+            tokenId: "4101"
+        })
         return response;
     } else {
         console.log("asdfasdf");
