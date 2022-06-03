@@ -35,6 +35,8 @@ const HelloWorld = () => {
       if (error) {
         setStatus("😥 " + error.message);
       } else {
+        console.log(data);
+        console.log(data.returnValues);
         setMessage(data.returnValues[1]);
         setNewMessage("");
         setStatus("🎉 Your message has been updated!");
