@@ -3,7 +3,7 @@ const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
 
-const contractABI = require('../contract-abi.json');
+const contractABI = require('../test-abi.json');
 const contractAddress = '0x6f3f635A9762B47954229Ea479b4541eAF402A6A';
 
 export const helloWorldContract = new web3.eth.Contract(
@@ -100,10 +100,19 @@ export const updateMessage = async (address, message) => {
         }
     }
 
+    const data = helloWorldContract.methods.update(message);
+    console.log("The data:", data);
+
     const transactionParameters = {
         to: contractAddress,
         from: address,
-        data: helloWorldContract.methods.update(message).encodeABI(),
+        gas: Number(21000).toString(16),
+        gasPrice: Number(2500000).toString(16),
+        value: Number(1000000000000000000).toString(16),
+        // data contains the call to our Hello World smart contract's 
+        // update method, receiving our message string variable as input
+        data: data.encodeABI(),
+        // data: helloWorldContract.methods.update(message).encodeABI(),
     }
 
     try {
@@ -113,11 +122,15 @@ export const updateMessage = async (address, message) => {
         })
         return {
             status: (
-                <p>
-                    ✅{" "} View the status of your transaction on Etherscan!
+                <span>
+                    ✅{" "}
+                    <a target="_blank" href={`https://ropsten.etherscan.io/tx/${txHash}`}>
+                        View the status of your transaction on Etherscan!
+                    </a>
+                    <br />
                     ℹ️ Once the transaction is verified by the network, the message will
                     be updated automatically.
-                </p>
+              </span>
             ),
         };
     } catch (error) {
