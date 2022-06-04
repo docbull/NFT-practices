@@ -5,9 +5,8 @@ pragma solidity ^0.8.14;
 // Once deployed, the contract resides at a specific address on the Ethereum blokchain
 // Learn more: https://solidity.readthedocs.io/en/v0.5.10/structure-of-a-contract.html
 contract TestContract {
-    // event 
+    // events are 
     event UpdatedMessages(string oldStr, string newStr);
-    
 
     string public message;
 
@@ -15,10 +14,11 @@ contract TestContract {
         message = initMessage;
     }
 
+    // functions are for running smart contracts from the outsides
     function update(string memory newMessage) public {
         string memory oldMsg = message;
         message = newMessage;
-        // after you emitted the event, it returns the parameters as
+        // after you emitted the event, it returns parameters as
         // an array such as: 
         /* emit UpdateMessages("Older", "Noob");
             data.returnValues
