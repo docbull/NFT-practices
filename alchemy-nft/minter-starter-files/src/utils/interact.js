@@ -85,11 +85,11 @@ export const connectWallet = async () => {
         let tokenId = web3.utils.hexToNumber(res.logs[0].topics[3]);
         console.log(tokenId);
 
-        res = await web3.alchemy.getNftMetadata({
-            contractAddress: "0x4c4a07f737bf57f6632b6cab089b78f62385acae",
-            tokenId: tokenId
-        })
-        console.log(res);
+        // res = await web3.alchemy.getNftMetadata({
+        //     contractAddress: "0x4c4a07f737bf57f6632b6cab089b78f62385acae",
+        //     tokenId: tokenId
+        // })
+        // console.log(res);
         
         let contract = new web3.eth.Contract(contractABI, "0x4c4a07f737bf57f6632b6cab089b78f62385acae");
         let owner = await contract.methods.ownerOf(tokenId).call();
